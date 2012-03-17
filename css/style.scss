@@ -46,6 +46,7 @@ body {
             position: absolute;
             left: 0; right: 0; top: 0; bottom: 0;
             padding: 30px;
+            padding-top:50px;
             width: auto; height: auto;
         }
     }
@@ -81,7 +82,7 @@ body {
     }
 }
 
-#code-toggle, #code-save, #code-popout {
+#code-toggle, #code-save, #code-popout, #next-arrow {
     position: absolute;
     stroke: #fff;
     stroke-width: 2px;
@@ -109,7 +110,7 @@ body {
         fill: #239;
     }
 }
-#code-save, #code-popout {
+#code-save, #code-popout, #next-arrow {
     left: 46px; top: 12px;
     fill: #000;
     opacity: 0;
@@ -122,4 +123,8 @@ body {
     &:hover {
         fill: #888;
     }
+}
+#next-arrow {
+    left: 12px; top: 12px;
+    opacity:1;
 }

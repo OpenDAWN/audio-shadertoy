@@ -97,6 +97,8 @@ function(core, material, datgui, event, params, selector, demo){
             setCodePoppedOut(!code_popped);
         }, false);
         function onCodeWindowLoad(){
+            var next_arrow = code_window.document.getElementById("next-arrow");
+            next_arrow.addEventListener("click", loadNextDemoShader);
             popped_code_text = code_window.document.getElementById("code-text");
             popped_code_text.value = code_text.value;
             code_toggle.style.display = "none";

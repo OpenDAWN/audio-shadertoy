@@ -78,6 +78,7 @@ body {
       top: 0;
       bottom: 0;
       padding: 30px;
+      padding-top: 50px;
       width: auto;
       height: auto; }
 
@@ -107,7 +108,7 @@ body {
     background: #0cc;
     color: #fff; }
 
-#code-toggle, #code-save, #code-popout {
+#code-toggle, #code-save, #code-popout, #next-arrow {
   position: absolute;
   stroke: #fff;
   stroke-width: 2px;
@@ -168,15 +169,20 @@ body {
   #code-toggle:hover {
     fill: #239; }
 
-#code-save, #code-popout {
+#code-save, #code-popout, #next-arrow {
   left: 46px;
   top: 12px;
   fill: #000;
   opacity: 0; }
-  #code-save:hover, #code-popout:hover {
+  #code-save:hover, #code-popout:hover, #next-arrow:hover {
     fill: #282; }
 
 #code-popout {
   left: 80px; }
   #code-popout:hover {
     fill: #888; }
+
+#next-arrow {
+  left: 12px;
+  top: 12px;
+  opacity: 1; }
