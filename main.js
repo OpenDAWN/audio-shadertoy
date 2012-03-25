@@ -236,8 +236,8 @@ function(core, material, datgui, event, params, selector, demo){
     function safeCreateAudioBuffer(buffer, callback){
         context.decodeAudioData(buffer, callback, onCreateAudioBufferError);
     }
-    function onCreateAudioBufferError(err){
-        console.error(err);
+    function onCreateAudioBufferError(){
+        console.error("Error decoding audio buffer");
     }
 
     function loadAudioBufferUrl(url, callback){
