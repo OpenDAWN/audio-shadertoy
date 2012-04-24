@@ -12,7 +12,10 @@ while(typetag.length() < fft.size()) {
 while(true) {
   fft.upchuck();
 
-  osc_out.startMsg("/thing/blah", typetag);
+  osc_out.startMsg("/ck/fft/size", "f");
+  fft.size() => osc_out.addFloat;
+
+  osc_out.startMsg("/ck/fft", typetag);
   for(0 => int i; i < fft.size(); ++i) {
     fft.fval(i) => osc_out.addFloat;
   }

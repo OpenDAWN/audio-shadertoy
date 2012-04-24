@@ -24,6 +24,8 @@ function(core, material, event, params, selector){
           , code_open = false
           , code_popped = false;
 
+        var socket;
+
         function setCodeOpen(open){
             if(open !== code_open){
                 code_open = open;
@@ -228,6 +230,13 @@ function(core, material, event, params, selector){
         reader.readAsArrayBuffer(file);
     }
 
+    function initWebSocket(){
+        socket = io.connect('http://localhost:1337');
+        socket.on('fft', function (data) {
+            console.log(data);
+        });        
+    }
+
     function initAudio(){
         if(window.webkitAudioContext){
             context = new webkitAudioContext();
@@ -263,10 +272,13 @@ function(core, material, event, params, selector){
     }
 
     function initFrequencyData(){
+
+        // TODO: set proper bin-count for fft analyzer
+
         freq_data = new Uint8Array(analyser.frequencyBinCount);
         freq_texture.setData(analyser.frequencyBinCount, 1, freq_data, {
-            format: gl.LUMINANCE,
-            formati: gl.LUMINANCE
+            format  : gl.LUMINANCE,
+            formati : gl.LUMINANCE
         });
     }
 
@@ -307,6 +319,7 @@ function(core, material, event, params, selector){
 
             parseShaderOutlets(shader_src_frag, {
                 "smoothing": function(value){
+                    // TOOO: set smoothing time constant in ck file
                     if(analyser)
                         analyser.smoothingTimeConstant = core.math.clamp(value, 0, 1);
                 },
@@ -381,6 +394,7 @@ function(core, material, event, params, selector){
     }
     window.addEventListener("resize", resize, false);
 
+    initWebSocket();
     initUI();
     initGL();
     initAudio();
