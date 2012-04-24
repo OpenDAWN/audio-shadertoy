@@ -4,6 +4,7 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
 <link href="css/style.css" media="all" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="lib/embr/src/lib/require.js"></script>
+<script src="http://localhost:1337/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 
 // Animation Frame Shim
@@ -21,6 +22,13 @@ if(!window.requestAnimationFrame){
 
 window.addEventListener("load", function(){
     require([ "main" ]);
+
+    var socket = io.connect('http://localhost:1337');
+    socket.on('test', function (data) {
+        console.log(data);
+        socket.emit('my event', { my: 'data' });
+    });
+
 });
 
 </script>
