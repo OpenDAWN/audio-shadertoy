@@ -234,7 +234,7 @@ function(core, material, event, params, selector){
         socket = io.connect('http://localhost:1337');
         socket.on('fft', function (data) {
             console.log(data);
-        });        
+        });
     }
 
     function initAudio(){
@@ -394,10 +394,10 @@ function(core, material, event, params, selector){
     }
     window.addEventListener("resize", resize, false);
 
-    initWebSocket();
     initUI();
     initGL();
-    initAudio();
+    // initAudio();
+    initWebSocket();
     resize();
     tryCompile(code_text);
 
