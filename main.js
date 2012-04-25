@@ -230,11 +230,15 @@ function(core, material, event, params, selector){
         reader.readAsArrayBuffer(file);
     }
 
-    function initWebSocket(){
+    function initSocket(){
         socket = io.connect('http://localhost:1337');
-        socket.on('fft', function (data) {
-            console.log(data);
+        socket.on("fft", function (data) {
+            var n = Math.min(freq_data.length, data.params.length);
+            for(var i = 0; i < n; ++i) {
+                freq_data[i] = Math.min(data.params[i] * 800, 255);
+            }
         });
+        initFrequencyData(128);
     }
 
     function initAudio(){
@@ -246,7 +250,7 @@ function(core, material, event, params, selector){
             analyser.smoothingTimeConstant = 0.5;
             analyser.connect(context.destination);
 
-            initFrequencyData();
+            initFrequencyData(analyser.frequencyBinCount);
         }
     }
 
@@ -271,12 +275,9 @@ function(core, material, event, params, selector){
         playlistPlay();
     }
 
-    function initFrequencyData(){
-
-        // TODO: set proper bin-count for fft analyzer
-
-        freq_data = new Uint8Array(analyser.frequencyBinCount);
-        freq_texture.setData(analyser.frequencyBinCount, 1, freq_data, {
+    function initFrequencyData(bin_count){
+        freq_data = new Uint8Array(bin_count);
+        freq_texture.setData(bin_count, 1, freq_data, {
             format  : gl.LUMINANCE,
             formati : gl.LUMINANCE
         });
@@ -326,7 +327,7 @@ function(core, material, event, params, selector){
                 "num_bands": function(value){
                     if(analyser && core.math.isPow2(value)){
                         analyser.fftSize = value * 2;
-                        initFrequencyData();
+                        initFrequencyData(analyser.frequencyBinCount);
                     }
                 },
                 "pixel_scale": function(value){
@@ -373,11 +374,11 @@ function(core, material, event, params, selector){
 
         window.requestAnimationFrame(render);
 
-        if(analyser){
-            analyser.getByteFrequencyData(freq_data);
+        // if(analyser){
+        //     analyser.getByteFrequencyData(freq_data);
             freq_texture.bind();
             freq_texture.updateData(freq_data);
-        }
+        // }
 
         program.use({
             u_frequencies: 0,
@@ -396,8 +397,7 @@ function(core, material, event, params, selector){
 
     initUI();
     initGL();
-    // initAudio();
-    initWebSocket();
+    initSocket();
     resize();
     tryCompile(code_text);
 

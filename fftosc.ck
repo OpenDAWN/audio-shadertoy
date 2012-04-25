@@ -2,7 +2,7 @@ OscSend osc_out;
 osc_out.setHost("localhost", 1338);
 
 adc => FFT fft => blackhole;
-4 => fft.size;
+256 => fft.size;
 
 "" => string typetag;
 while(typetag.length() < fft.size()) {
@@ -18,5 +18,5 @@ while(true) {
   }
 
   // advance time
-  100::ms => now;
+  (1000/60)::ms => now;
 }
