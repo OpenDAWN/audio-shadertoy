@@ -80,6 +80,7 @@ function(core, material, event, params, selector){
                     if(code_window){
                         code_window.close();
                         code_window = null;
+                        createGuiFromTextArea(code_text);
                     }
                 }
                 setCodeOpen(!popped);
@@ -317,6 +318,40 @@ function(core, material, event, params, selector){
         }
     }
 
+    function createGuiFromTextArea(textarea) {
+
+        var code_text = textarea.value;
+
+        if (gui) gui.destroy();
+        gui = code_window ? code_window.gui() : new datgui();
+
+        // match all floats
+        var re = /\-?\d*\.\d+|\d+\.\d*/g, m, matches = [];
+        while((m = re.exec(code_text)) !== null){
+            matches.push({
+                 value : m[0],
+                 index : m.index
+            });
+        }
+
+        // assign float values to sliders
+        matches.forEach(function(m, i) {
+            var val = parseFloat(m.value);
+            var obj = { value : parseFloat(m.value) };
+            var max = val === 0 ? 1 : val + Math.abs(val);
+            var min = val === 0 ? -1 : val - Math.abs(val);
+            var slider = gui.add(obj, 'value', min, max);
+            slider.onChange(function(v){
+                selector.setSelection(textarea, m.index, m.index + m.value.length);
+                m.value = selector.changeFloatNumber(textarea, v);
+                tryCompile(textarea);
+            });
+            slider.onFinishChange(function(v){
+               createGuiFromTextArea(textarea); 
+            });
+        });
+    }    
+
     function tryCompile(textarea){
         try{
             var shader_src_frag = textarea.value.trim();
@@ -409,6 +444,7 @@ function(core, material, event, params, selector){
     initSocket();
     resize();
     tryCompile(code_text);
+    createGuiFromTextArea(code_text);
 
     var start_time = Date.now();
 
@@ -417,6 +453,7 @@ function(core, material, event, params, selector){
             params.lzmaDecompress(hex, function(src){
                 code_text.value = src;
                 tryCompile(code_text);
+                createGuiFromTextArea(code_text);
             });
         }
     });
