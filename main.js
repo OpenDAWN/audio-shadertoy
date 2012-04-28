@@ -205,6 +205,8 @@ function(core, material, event, params, selector){
 
     var context, source, analyser, freq_data, buffer_complete_cb;
 
+    var fft_mult = 800, fft_max = 255;
+
     function safeCreateAudioBuffer(buffer, callback){
         if(context)
             context.decodeAudioData(buffer, callback, onCreateAudioBufferError);
@@ -235,7 +237,7 @@ function(core, material, event, params, selector){
         socket.on("fft", function (data) {
             var n = Math.min(freq_data.length, data.params.length);
             for(var i = 0; i < n; ++i) {
-                freq_data[i] = Math.min(data.params[i] * 800, 255);
+                freq_data[i] = Math.min(data.params[i] * fft_mult, fft_max);
             }
         });
         initFrequencyData(128);
@@ -335,6 +337,12 @@ function(core, material, event, params, selector){
                         canvas_pixel_scale = value;
                         resize();
                     }
+                },
+                "fft_mult" : function(value) {
+                    fft_mult = value;
+                },
+                "fft_max" : function(value) {
+                    fft_max = value;
                 }
             });
 
