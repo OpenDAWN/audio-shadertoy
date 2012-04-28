@@ -129,8 +129,9 @@ function(core, material, event, params, selector){
             }, false);
 
             // Magic Number Dial / Scroll
-            textarea.addEventListener("mousewheel", function(e){
-                selector.scrollNumber(textarea, e.wheelDelta / 40, function(){
+            var wheelEvt = "DOMMouseScroll"; // chrome: "mousewheel"
+            textarea.addEventListener(wheelEvt, function(e){
+                selector.scrollNumber(textarea, e.detail, function(){ // chrome: e.wheelDelta
                     e.stopPropagation();
                     e.preventDefault();
                     tryCompile(textarea);
