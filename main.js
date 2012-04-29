@@ -1,26 +1,33 @@
 require.config({
-    paths: { "embr": "lib/embr/src" }
+    paths: { 
+        "embr" : "lib/embr/src",
+        "dat" : "lib/dat-gui/src/dat",
+        "text" : "lib/embr/src/lib/text" 
+    }
 });
 require([
     "embr/core",
     "embr/material",
+    "dat/gui/GUI",    
     "event",
     "params",
     "selector"
 ],
-function(core, material, event, params, selector){
+function(core, material, datgui, event, params, selector){
 
     // UI //
 
-    var code_text = document.getElementById("code-text");
+    var code_text = document.getElementById("code-text")
+      , popped_code_text = null
+      , code_window = null;
+
+    var gui = null;    
 
     function initUI(){
         var code = document.getElementById("code")
           , code_toggle = document.getElementById("code-toggle")
           , code_save = document.getElementById("code-save")
           , code_popout = document.getElementById("code-popout")
-          , code_window = null
-          , popped_code_text = null
           , code_open = false
           , code_popped = false;
 
@@ -80,6 +87,7 @@ function(core, material, event, params, selector){
                     if(code_window){
                         code_window.close();
                         code_window = null;
+                        popped_code_text = null;
                         createGuiFromTextArea(code_text);
                     }
                 }
@@ -92,10 +100,13 @@ function(core, material, event, params, selector){
         function onCodeWindowLoad(){
             popped_code_text = code_window.document.getElementById("code-text");
             popped_code_text.value = code_text.value;
+            code_toggle.style.display = "none";
+            createGuiFromTextArea(popped_code_text);
             addCodeEventListeners(popped_code_text);
         }
         function onCodeWindowUnload(){
             code_text.value = popped_code_text.value;
+            code_toggle.style.display = "block";
             setCodePoppedOut(false);
         }
 
@@ -124,6 +135,7 @@ function(core, material, event, params, selector){
                     return;
 
                 tryCompile(textarea);
+                createGuiFromTextArea(textarea);
             }, false);
             textarea.addEventListener("keypress", function(e){
                 e.stopPropagation();
@@ -255,6 +267,8 @@ function(core, material, event, params, selector){
             analyser.connect(context.destination);
 
             initFrequencyData(analyser.frequencyBinCount);
+        } else {
+            analyser = null;
         }
     }
 
@@ -359,8 +373,8 @@ function(core, material, event, params, selector){
             parseShaderOutlets(shader_src_frag, {
                 "smoothing": function(value){
                     // TOOO: set smoothing time constant in ck file
-                    if(analyser)
-                        analyser.smoothingTimeConstant = core.math.clamp(value, 0, 1);
+                    //if(analyser)
+                        //analyser.smoothingTimeConstant = core.math.clamp(value, 0, 1);
                 },
                 "num_bands": function(value){
                     if(analyser && core.math.isPow2(value)){
