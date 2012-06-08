@@ -187,6 +187,7 @@ function(core, material, event, params, selector){
         width: canvas_thumb_size + "px",
         height: canvas_thumb_size + "px"
       };
+      save_dialog.classList.remove("shut");
       save_scrim.classList.remove("shut");
     }
     else {
@@ -201,7 +202,10 @@ function(core, material, event, params, selector){
     save_dialog_sel.animate({
       left: (window.innerWidth - save_dialog.offsetWidth) / 2,
       top: canvas_props.top - (save_dialog.offsetHeight + padding)
-    }, dur, ease);
+    }, dur, ease, function(){
+      if(!canvas_thumbed)
+        save_dialog.classList.add("shut");
+    });
   }
 
 
@@ -212,12 +216,12 @@ function(core, material, event, params, selector){
   function postCode(){
     // get lzma compressed
     params.lzmaCompress(code_text.value.trim(), 1, function(code_lzma){
-
       var shader_data = {
-            "code_lzma" : code_lzma,
-            "img" : canvas.toDataURL(),
-          };
-      if (sc_trackinfo) {
+        "code_lzma" : code_lzma,
+        "img" : canvas.toDataURL(),
+      };
+
+      if(sc_trackinfo){
         shader_data.track_url = sc_trackinfo.url || null;
         shader_data.track_artist = sc_trackinfo.artist || null;
         shader_data.track_title = sc_trackinfo.title || null;
@@ -225,19 +229,19 @@ function(core, material, event, params, selector){
         shader_data.track_duration = sc_trackinfo.duration || null;
       }
 
-      // post shader to DB
+      // Post shader to DB
       $.ajax({
-          type: 'POST',
-          url: "/s",
-          data: shader_data,
-          dataType: 'json',
-          success: function(responseData, textStatus, jqXHR) {
-              window.location = '#s=' + responseData.short_url;
-              save_dialog_link.value = window.location;
-          },
-          error: function (responseData, textStatus, errorThrown) {
-            console.log('POST failed.');
-          }
+        type: "POST",
+        url: "/s",
+        data: shader_data,
+        dataType: "json",
+        success: function(res){
+          window.location = '#s=' + res.short_url;
+          save_dialog_link.value = window.location;
+        },
+        error: function(){
+          console.error('POST failed.');
+        }
       });
     });
   }
