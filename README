@@ -1,5 +1,10 @@
 Audio ShaderToy
 
-Drag a .mp3 to your browser and go!
+Live-Audio Branch
 
-We use Web Audio API, so this is Chrome-only for now. Hopefully there will be a standard way of doing this soon.
+Requires Node.js and ChucK for audio analysis.
+
+To run audio FFT server:
+    node server.js
+
+Then visit index.html in your browser.
