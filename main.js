@@ -251,7 +251,8 @@ function(core, material, datgui, event, params, selector){
         socket.on("fft", function (data) {
             var n = Math.min(freq_data.length, data.params.length);
             for(var i = 0; i < n; ++i) {
-                freq_data[i] = Math.min(data.params[i] * fft_mult, fft_max);
+                var v = Math.min(data.params[i] * fft_mult, fft_max);
+                freq_data[i] = v + (freq_data[i] - v) * fft_smoothing;
             }
         });
         initFrequencyData(128);
@@ -372,6 +373,7 @@ function(core, material, datgui, event, params, selector){
 
             parseShaderOutlets(shader_src_frag, {
                 "smoothing": function(value){
+                    fft_smoothing = value;
                     // TOOO: set smoothing time constant in ck file
                     //if(analyser)
                         //analyser.smoothingTimeConstant = core.math.clamp(value, 0, 1);
